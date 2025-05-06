@@ -1,53 +1,42 @@
 import React, { useState } from 'react';
 
-const Subscribe = () => {
-  const [email, setEmail] = useState('');
+const Header = () => {
+  const [activeLink, setActiveLink] = useState('Hogar');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email) {
-      alert(`¡Gracias por suscribirte, ${email}!`);
-      setEmail('');
-    } else {
-      alert('Por favor, ingresa un correo electrónico válido.');
-    }
+  const handleNavClick = (link) => {
+    setActiveLink(link);
+    alert(`Navigating to ${link}`);
   };
 
   return (
-    <section className="section has-background-light">
-      <div className="container">
-        <h2 className="title is-3 has-text-centered">Suscríbete a Nuestro Boletín</h2>
-        <p className="subtitle is-5 has-text-centered mb-5">
-          Recibe las últimas noticias y ofertas de Turismo Yarowilca directamente en tu correo.
-        </p>
-        <div className="columns is-centered">
-          <div className="column is-half">
-            <form onSubmit={handleSubmit}>
-              <div className="field has-addons">
-                <div className="control is-expanded">
-                  <input
-                    className="input is-medium"
-                    type="email"
-                    placeholder="Ingresa tu correo electrónico"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="control">
-                  <button
-                    type="submit"
-                    className="pulse-button is-medium"
-                  >
-                    Suscribirse
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+    <header className="bg-gradient-to-r from-pink-500 to-orange-400 p-4 shadow-lg">
+      <div className="container mx-auto flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <img src="https://via.placeholder.com/50?text=Logo" alt="Agency Logo" className="h-10 w-10" />
+          <h1 className="text-2xl font-bold text-white">Turismo Huarowilca</h1>
+        </div>
+        <nav className="flex space-x-4">
+          {['Hogar', 'Proyectos Sostenibles', 'Pase de Parque Tassie', 'Espíritu de Tasmania', 'Más', 'Buscar...', 'Carrito (0)'].map((link) => (
+            <button
+              key={link}
+              onClick={() => handleNavClick(link)}
+              className={`text-white hover:underline ${activeLink === link ? 'font-bold' : ''}`}
+            >
+              {link}
+            </button>
+          ))}
+        </nav>
+        <div className="flex space-x-4">
+          <button onClick={() => alert('Subscription form opened!')} className="pulse-button">
+            Suscríbete
+          </button>
+          <a href="mailto:info@turismohuarowilca.com" className="pulse-button">
+            info@turismohuarowilca.com
+          </a>
         </div>
       </div>
-    </section>
+    </header>
   );
 };
 
-export default Subscribe;
+export default Header;
