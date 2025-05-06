@@ -1,7 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "~bulma/bulma.sass";
 
 /* Estilos personalizados */
 body {
@@ -16,26 +15,6 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
-
-/* Estilo para el modal */
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  transition: all 0.3s ease-in-out;
-}
-
-.modal.is-active .modal-content {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.modal .modal-background {
-  transition: opacity 0.3s ease-in-out;
 }
 
 /* Animación de botón "Pulse" desde Uiverse.io */
@@ -63,11 +42,11 @@ code {
 }
 
 /* Animación de hover para tarjetas desde Uiverse.io */
-.card {
+.card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover {
+.card-hover:hover {
   transform: translateY(-5px) scale(1.02);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
