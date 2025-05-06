@@ -12,8 +12,8 @@ const Header = () => {
     <header className="bg-gradient-to-r from-pink-500 to-orange-400 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <img src="https://via.placeholder.com/50?text=Logo" alt="Agency Logo" className="h-10 w-10" />
-          <h1 className="text-2xl font-bold text-white">Turismo Huarowilca</h1>
+          <img src="https://th.bing.com/th/id/OIP.SPxngas2ax8C6gpfGDcSkQHaHa?cb=iwp1&rs=1&pid=ImgDetMain" alt="Agency Logo" className="h-10 w-10" />
+          <h1 className="text-2xl font-bold text-white">Turismo Yarowilca</h1>
         </div>
         <nav className="flex space-x-4">
           {['Hogar', 'Proyectos Sostenibles', 'Pase de Parque Tassie', 'Espíritu de Tasmania', 'Más', 'Buscar...', 'Carrito (0)'].map((link) => (
@@ -31,7 +31,7 @@ const Header = () => {
             Suscríbete
           </button>
           <a href="mailto:info@turismohuarowilca.com" className="pulse-button">
-            info@turismohuarowilca.com
+            info@turismoYarowilca.com
           </a>
         </div>
       </div>

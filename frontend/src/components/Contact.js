@@ -6,7 +6,7 @@ const Contact = () => {
       <div className="container mx-auto text-center text-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <p className="font-bold">Turismo Huarowilca</p>
+            <p className="font-bold">Turismo Yarowilca</p>
             <p>Huánuco, Perú</p>
             <p>Tel: (01) 6237</p>
             <p>
