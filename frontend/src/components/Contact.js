@@ -10,7 +10,7 @@ const Contact = () => {
             <p>Huánuco, Perú</p>
             <p>Tel: (01) 6237</p>
             <p>
-              Email: <a href="mailto:info@turismohuarowilca.com" className="hover:underline">info@turismohuarowilca.com</a>
+              Email: <a href="mailto:info@turismoYarowilca.com" className="hover:underline">info@turismoYarowilca.com</a>
             </p>
           </div>
           <div className="flex justify-center space-x-4">
