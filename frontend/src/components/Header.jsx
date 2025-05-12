@@ -16,7 +16,7 @@ const Header = () => {
           <h1 className="text-2xl font-bold text-white">Turismo Yarowilca</h1>
         </div>
         <nav className="flex space-x-4">
-          {['Hogar', 'Proyectos Sostenibles', 'Pase de Parque Tassie', 'Espíritu de Tasmania', 'Más', 'Buscar...', 'Carrito (0)'].map((link) => (
+          {['Historia', 'Comida típica', 'Paradero'].map((link) => (
             <button
               key={link}
               onClick={() => handleNavClick(link)}
