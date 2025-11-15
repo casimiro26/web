@@ -1,13 +1,13 @@
 import { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Animated, ActivityIndicator } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
+import * as FileSystem from 'expo-file-system';
 import { Camera as CameraIcon, RotateCcw, Sparkles } from 'lucide-react-native';
 import { simulateEmotionDetection, simulateGenderDetection, simulateAgeDetection } from '@/utils/mockDetection';
 import { generateRecommendations } from '@/utils/skinRecommendations';
 import { saveAnalysis } from '@/services/storageService';
 import { AnalysisResult } from '@/types/analysis';
 
-// Agregar los emojis de emociones
 const emotionEmojis = {
   feliz: '😊',
   triste: '😢',
@@ -50,12 +50,10 @@ export default function CameraScreen() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  // Función para mostrar el emoji con animación
   const showEmotionEmoji = (emotion: string) => {
     setDetectedEmotion(emotion);
     setShowEmoji(true);
-    
-    // Animación de entrada
+
     Animated.sequence([
       Animated.spring(emojiScale, {
         toValue: 1.2,
@@ -71,7 +69,6 @@ export default function CameraScreen() {
       }),
     ]).start();
 
-    // Ocultar después de 5 segundos (más tiempo para que coincida con la alerta)
     setTimeout(() => {
       hideEmotionEmoji();
     }, 5000);
@@ -88,11 +85,31 @@ export default function CameraScreen() {
     });
   };
 
+  async function captureImage(): Promise<string | null> {
+    try {
+      if (!cameraRef.current) return null;
+
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 0.8,
+        base64: false,
+      });
+
+      console.log('[v0] Imagen capturada:', photo.uri);
+      return photo.uri;
+    } catch (error) {
+      console.error('[v0] Error al capturar imagen:', error);
+      return null;
+    }
+  }
+
   async function analyzeImage() {
     setAnalyzing(true);
 
     setTimeout(async () => {
       try {
+        const imageUri = await captureImage();
+        console.log('[v0] URI de imagen:', imageUri);
+
         const emotion = simulateEmotionDetection();
         const gender = simulateGenderDetection();
         const age = simulateAgeDetection();
@@ -105,14 +122,13 @@ export default function CameraScreen() {
           gender,
           age,
           recommendations,
+          imageUrl: imageUri || undefined, // Incluir URL de imagen
         };
 
-        await saveAnalysis(analysis);
+        await saveAnalysis(analysis, imageUri || undefined);
 
-        // Mostrar el emoji de la emoción detectada
         showEmotionEmoji(emotion.emotion);
 
-        // Mostrar la alerta después de un pequeño delay para que el emoji ya esté visible
         setTimeout(() => {
           Alert.alert(
             '¡Análisis Completo!',
@@ -122,6 +138,7 @@ export default function CameraScreen() {
         }, 500);
 
       } catch (error) {
+        console.error('[v0] Error en análisis:', error);
         Alert.alert('Error', 'No se pudo guardar el análisis');
       } finally {
         setAnalyzing(false);
@@ -140,10 +157,9 @@ export default function CameraScreen() {
         <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
           <View style={styles.overlay}>
             <View style={styles.faceGuide} />
-            
-            {/* Emoji de emoción detectada - Posicionado en la parte superior */}
+
             {showEmoji && detectedEmotion && (
-              <Animated.View 
+              <Animated.View
                 style={[
                   styles.emojiContainer,
                   {
@@ -158,6 +174,13 @@ export default function CameraScreen() {
                   {detectedEmotion.charAt(0).toUpperCase() + detectedEmotion.slice(1)}
                 </Text>
               </Animated.View>
+            )}
+
+            {analyzing && (
+              <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#ffffff" />
+                <Text style={styles.loadingText}>Analizando...</Text>
+              </View>
             )}
           </View>
         </CameraView>
@@ -180,7 +203,7 @@ export default function CameraScreen() {
         >
           {analyzing ? (
             <>
-              <Sparkles size={28} color="#ffffff" />
+              <ActivityIndicator size="small" color="#ffffff" />
               <Text style={styles.analyzeButtonText}>Analizando...</Text>
             </>
           ) : (
@@ -249,10 +272,9 @@ const styles = StyleSheet.create({
     borderRadius: 120,
     borderStyle: 'dashed',
   },
-  // Nuevos estilos para el emoji - Posicionado en la parte superior de la cámara
   emojiContainer: {
     position: 'absolute',
-    top: 50, // Posición fija en la parte superior de la cámara
+    top: 50,
     alignSelf: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 20,
@@ -264,7 +286,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-    zIndex: 1000, // Asegurar que esté por encima de todo
+    zIndex: 1000,
   },
   emojiText: {
     fontSize: 40,
@@ -274,6 +296,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#111827',
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
   controls: {
     flexDirection: 'row',

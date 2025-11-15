@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Smile, Frown, Angry, Surprised, Meh, Skull, ThumbsDown, Trash2, ChevronRight } from 'lucide-react-native';
 import { getAnalysisHistory, deleteAnalysis, clearHistory } from '@/services/storageService';
@@ -105,13 +105,9 @@ export default function HistoryScreen() {
     });
   }
 
-  // CORRECCIÓN: Usar useCallback para evitar recreaciones innecesarias
   const renderItem = useCallback(({ item }: { item: AnalysisResult }) => {
-    // CORRECCIÓN: Validar que el ícono existe antes de renderizar
     const EmotionIcon = emotionIcons[item.emotion.emotion];
     const emotionColor = emotionColors[item.emotion.emotion];
-
-    // Si no existe el ícono, usar uno por defecto
     const IconComponent = EmotionIcon || Meh;
 
     return (
@@ -121,9 +117,16 @@ export default function HistoryScreen() {
           onPress={() => router.push(`/analysis/${item.id}`)}
           activeOpacity={0.7}
         >
-          <View style={[styles.emotionBadge, { backgroundColor: `${emotionColor}20` }]}>
-            <IconComponent size={28} color={emotionColor} />
-          </View>
+          {item.imageUrl ? (
+            <Image
+              source={{ uri: item.imageUrl }}
+              style={styles.cardImage}
+            />
+          ) : (
+            <View style={[styles.emotionBadge, { backgroundColor: `${emotionColor}20` }]}>
+              <IconComponent size={28} color={emotionColor} />
+            </View>
+          )}
 
           <View style={styles.cardInfo}>
             <Text style={styles.emotionText}>
@@ -133,6 +136,9 @@ export default function HistoryScreen() {
               {item.gender?.gender === 'hombre' ? 'Hombre' : 'Mujer'} • {item.age?.age || 'N/A'} años
             </Text>
             <Text style={styles.dateText}>{formatDate(item.timestamp)}</Text>
+            {item.apiId && (
+              <Text style={styles.syncBadge}>✓ Sincronizado</Text>
+            )}
           </View>
 
           <ChevronRight size={20} color="#9ca3af" />
@@ -149,7 +155,6 @@ export default function HistoryScreen() {
     );
   }, [router]);
 
-  // CORRECCIÓN: Usar useCallback para keyExtractor
   const keyExtractor = useCallback((item: AnalysisResult) => item.id, []);
 
   return (
@@ -162,8 +167,8 @@ export default function HistoryScreen() {
           </Text>
         </View>
         {history.length > 0 && (
-          <TouchableOpacity 
-            style={styles.clearButton} 
+          <TouchableOpacity
+            style={styles.clearButton}
             onPress={handleClearAll}
             activeOpacity={0.7}
           >
@@ -264,6 +269,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 16,
   },
+  cardImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#e5e7eb',
+  },
   emotionBadge: {
     width: 56,
     height: 56,
@@ -288,6 +299,12 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 12,
     color: '#9ca3af',
+  },
+  syncBadge: {
+    fontSize: 11,
+    color: '#10b981',
+    fontWeight: '600',
+    marginTop: 4,
   },
   deleteButton: {
     padding: 8,
