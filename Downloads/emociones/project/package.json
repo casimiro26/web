@@ -1,6 +1,6 @@
 {
-  "name": "bolt-expo-starter",
-  "main": "expo-router/entry",
+  "name": "EmocionesAPk",
+  "main": "EmocionesAPk",
   "version": "1.0.0",
   "private": true,
   "scripts": {
